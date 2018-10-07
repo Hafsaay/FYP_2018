@@ -12,6 +12,10 @@ const ProfileSchema = new Schema({
     required: true,
     max: 40
   },
+  search: {
+    type: String,
+    max: 40
+  },
   company: {
     type: String
   },
@@ -32,9 +36,9 @@ const ProfileSchema = new Schema({
   bio: {
     type: String
   },
-  githubusername: {
-    type: String
-  },
+  // githubusername: {
+  //   type: String
+  // },
   experience: [
     {
       title: {
@@ -70,8 +74,12 @@ const ProfileSchema = new Schema({
         type: String,
         required: true
       },
-      degree: {
+      roll_no: {
         type: String,
+        required: true
+      },
+      degree: {
+        type: [String],
         required: true
       },
       fieldofstudy: {

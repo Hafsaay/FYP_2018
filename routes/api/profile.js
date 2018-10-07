@@ -58,6 +58,26 @@ router.get("/all", (req, res) => {
     })
     .catch(err => res.status(404).json({ profile: "There are no profiles" }));
 });
+// @route   GET api/profile/search
+// @desc    Get serached profiles
+// @access  Public
+router.get("/search/:search", (req, res) => {
+  const errors = {};
+
+  Profile.find({ search: req.params.search })
+    .populate("user", ["name", "avatar"])
+    .then(profile => {
+      if (!profile) {
+        errors.noprofile = "There is no profile for this user";
+        res.status(404).json(errors);
+      }
+      // else {
+      //   res.json(profile);
+      // }
+      res.json(profile);
+    })
+    .catch(err => res.status(404).json({ profile: "There are no profiles" }));
+});
 
 // @route   GET api/profile/handle/:handle
 // @desc    Get profile by handle
@@ -120,14 +140,12 @@ router.post(
     const profileFields = {};
     profileFields.user = req.user.id;
     if (req.body.handle) profileFields.handle = req.body.handle;
+    if (req.body.search) profileFields.search = req.body.search;
     if (req.body.company) profileFields.company = req.body.company;
     if (req.body.website) profileFields.website = req.body.website;
     if (req.body.location) profileFields.location = req.body.location;
     if (req.body.bio) profileFields.bio = req.body.bio;
     if (req.body.status) profileFields.status = req.body.status;
-    if (req.body.githubusername)
-      profileFields.githubusername = req.body.githubusername;
-    // Skills - Spilt into array
     if (typeof req.body.skills !== "undefined") {
       profileFields.skills = req.body.skills.split(",");
     }
@@ -218,7 +236,8 @@ router.post(
     Profile.findOne({ user: req.user.id }).then(profile => {
       const newEdu = {
         school: req.body.school,
-        degree: req.body.degree,
+        roll_no: req.body.roll_no,
+        degree: req.body.degree.split(","),
         fieldofstudy: req.body.fieldofstudy,
         from: req.body.from,
         to: req.body.to,
